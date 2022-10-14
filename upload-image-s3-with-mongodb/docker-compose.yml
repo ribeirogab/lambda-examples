@@ -1,0 +1,25 @@
+version: "3.7"
+
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb-aws-cdk-lambda
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=db
+    ports:
+      - 27017:27017
+
+  lambda:
+    image: amazon/aws-lambda-nodejs:16
+    env_file:
+      - .env
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/var/task
+    command: [dist/index.handler]
+    depends_on:
+      - mongodb
+
